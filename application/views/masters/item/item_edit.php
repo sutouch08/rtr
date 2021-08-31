@@ -16,7 +16,8 @@
         <label class="col-sm-3 col-xs-12 control-label no-padding-right">ชื่อสินค้า</label>
         <div class="col-xs-12 col-sm-4">
             <input type="text" name="name" id="name"
-            class="width-100" maxlength="250" value="<?php echo $name; ?>"
+            class="width-100" maxlength="250"
+            value="<?php echo escape_quote($name); ?>"
             placeholder="Item name"
             autofocus  required />
         </div>
@@ -27,14 +28,17 @@
     <div class="form-group">
         <label class="col-sm-3 col-xs-12 control-label no-padding-right">บาร์โค้ด</label>
         <div class="col-xs-12 col-sm-2">
-          <input type="text" class="form-control input-sm" id="barcode" name="barcode" value="<?php echo $barcode; ?>" placeholder="Barcode"/>
+          <input type="text" class="form-control input-sm"
+          id="barcode" name="barcode"
+          placeholder="Barcode" value="<?php echo $barcode; ?>"/>
         </div>
     </div>
 
     <div class="form-group">
         <label class="col-sm-3 col-xs-12 control-label no-padding-right">ราคา</label>
         <div class="col-xs-12 col-sm-2">
-            <input type="number" name="price" id="price" class="form-control input-sm " value="<?php echo $price; ?>" />
+            <input type="number" name="price" id="price"
+            class="form-control input-sm " value="<?php echo $price; ?>" />
         </div>
     </div>
 
@@ -43,7 +47,7 @@
         <label class="col-sm-3 col-xs-12 control-label no-padding-right">กลุ่มสินค้า</label>
         <div class="col-xs-10 col-sm-2">
             <select class="form-control input-sm" name="item_group_id" id="item_group_id">
-              <option value="" disabled>กรุณาเลือก</option>
+              <option value="">กรุณาเลือก</option>
               <?php echo select_item_group($item_group_id); ?>
             </select>
         </div>
@@ -74,12 +78,57 @@
             </select>
         </div>
         <div class="col-xs-12 col-sm-4">
-          <span><span id="main_uom_label"> 1 <?php echo $main_uom_name; ?> = </span>
-            <input type="number" class="form-control input-sm input-small inline text-center" name="rate" id="rate" value="<?php echo $rate; ?>" placeholder="ตัวคูณ"/>
-            <span id="sku_label" style="padding-left:10px;"> <?php echo $uom_name; ?></span>
+          <span><label class="input-mini" id="main_uom_label">1 <?php echo $main_uom_name; ?> = </label>
+            <input type="number" class="form-control input-sm input-small inline text-center"
+            name="rate" id="rate" placeholder="ตัวคูณ" value="<?php echo $rate; ?>"/>
+            <label class="input-mini" id="sku_label" style="padding-left:10px;"><?php echo $uom_name; ?></label>
           </span>
         </div>
 
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-3 col-xs-12 control-label no-padding-right">หน่วยนับอื่นๆ</label>
+        <div class="col-xs-12 col-sm-2 margin-bottom-10">
+            <select class="form-control input-sm" id="uom" onchange="changeULabel()">
+              <option value="">กรุณาเลือก</option>
+              <?php echo select_uom(); ?>
+            </select>
+        </div>
+        <div class="col-xs-12 col-sm-4">
+          <span><label class="input-mini" id="u_uom_label">ตัวคูณ</label>
+            <input type="number" class="form-control input-sm input-small inline text-center" name="u_rate" id="u_rate" placeholder="ตัวคูณ"/>
+            <label class="input-mini" id="u_sku_label" style="padding-left:10px;"></label>
+            <button type="button" class="btn btn-xs btn-success input-small" onclick="addUom()"><i class="fa fa-plus"></i> เพิ่ม</button>
+          </span>
+        </div>
+        <div class="col-xs-6 col-sm-1 padding-5">
+
+        </div>
+    </div>
+
+
+    <div class="form-group" id="form-group-uom">
+      <label class="col-sm-3 col-xs-12 control-label no-padding-right"></label>
+      <div class="col-xs-12 col-sm-4" id="uom-item-list">
+        <?php $no = 1; ?>
+        <?php if(!empty($uom_items)) : ?>
+          <?php foreach($uom_items as $uom_item) : ?>
+            <?php if($uom_item->uom_id != $uom_id && $uom_item->uom_id != $main_uom_id) : ?>
+            <label  style="padding:10px; background-color:lightgreen;" id="tag-<?php echo $no; ?>">
+              <?php echo $uom_item->uom_name." (".round($uom_item->rate, 2).")"; ?>
+              <a class="pointer bold" onclick="removeTag(<?php echo $no; ?>)" style="margin-left:15px;">
+                <i class="fa fa-trash red"></i>
+              </a>
+            </label>
+            <input type="hidden" class="uom-item"
+            name="uom_item" id="uom-item-<?php echo $no; ?>"
+            value="<?php echo $uom_item->uom_id; ?>" data-rate="<?php echo round($uom_item->rate); ?>">
+            <?php $no++; ?>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
     </div>
 
     <div class="form-group">
@@ -102,7 +151,9 @@
         </div>
     </div>
 
+    <input type="text" name="x-form" class="hidden">
     <input type="hidden" id="id" value="<?php echo $id; ?>">
+    <input type="hidden" id="no" value="<?php echo $no; ?>">
 </form>
 
 
@@ -161,5 +212,5 @@
   <input type="hidden" class="uom-item" name="uom_item" id="uom-item-{{no}}" value="{{id}}" data-rate="{{rate}}">
 </script>
 
-<script src="<?php echo base_url(); ?>scripts/masters/item.js?v=<?php echo date('Ymd'); ?>"></script>
+<script src="<?php echo base_url(); ?>scripts/masters/item.js"></script>
 <?php $this->load->view('include/footer'); ?>

@@ -117,6 +117,23 @@
           </select>
         </div>
     </div>
+
+    <div class="form-group">
+      <label class="col-sm-3 col-xs-12 no-padding-right"></label>
+      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+    		<div class="col-sm-12 col-xs-12 no-padding">
+    			<span class="profile-picture">
+    				<img class="editable img-responsive" src="<?php echo no_image_path('mini'); ?>">
+    			</span>
+    		</div>
+    		<div class="divider-hidden"></div>
+
+    		<div class="col-sm-12 col-xs-12 ">
+    			<button type="button" class="btn btn-sm btn-success" onclick="changeImage()">เลือกรูปภาพ</button>
+    		</div>
+    	</div>
+    </div>
+
     <div class="divider-hidden" id="divider"> </div>
     <div class="divider-hidden" id="divider"> </div>
     <div class="divider-hidden" id="divider"> </div>

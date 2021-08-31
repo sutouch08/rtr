@@ -25,6 +25,8 @@ function saveAdd() {
     let main_uom_id = $('#main_uom_id').val();
     let rate = $("#rate").val();
     let status = $("#status").val();
+    let uom_item = [];
+
 
 
     if(name.length == 0) {
@@ -62,6 +64,19 @@ function saveAdd() {
     }
 
 
+    if($('.uom-item').length)
+    {
+      $('.uom-item').each(function(){
+        let ds = {
+          'id': $(this).val(),
+          'rate' : $(this).data('rate')
+        }
+
+        uom_item.push(ds);
+      })
+    }
+
+
     load_in();
 
     $.ajax({
@@ -76,7 +91,8 @@ function saveAdd() {
             'price' : price,
             'status' : status,
             'main_uom_id' : main_uom_id,
-            'rate' : rate
+            'rate' : rate,
+            'uom_items': uom_item
         },
         success:function(rs) {
             load_out();
@@ -120,8 +136,10 @@ function update() {
     let price = $('#price').val();
     let uom_id = $('#uom_id').val();
     let main_uom_id = $('#main_uom_id').val();
-    let rate = $('#rate').val();
-    let status = $('#status').val();
+    let rate = $("#rate").val();
+    let status = $("#status").val();
+    let uom_item = [];
+
 
 
     if(name.length == 0) {
@@ -150,7 +168,6 @@ function update() {
       $('#uom_id').removeClass('has-error');
     }
 
-
     if(main_uom_id != "" && (rate == "" || rate == 0 || rate < 0)) {
       $('#rate').addClass('has-error');
       return false;
@@ -159,6 +176,18 @@ function update() {
       $('#rate').removeClass('has-error');
     }
 
+
+    if($('.uom-item').length)
+    {
+      $('.uom-item').each(function(){
+        let ds = {
+          'id': $(this).val(),
+          'rate' : $(this).data('rate')
+        }
+
+        uom_item.push(ds);
+      })
+    }
 
 
     load_in();
@@ -172,11 +201,12 @@ function update() {
             'name' : name,
             'barcode' : barcode,
             'uom_id' : uom_id,
-            'main_uom_id' : main_uom_id,
-            'rate' : rate,
             'item_group_id' : item_group_id,
             'price' : price,
-            'status' : status
+            'status' : status,
+            'main_uom_id' : main_uom_id,
+            'rate' : rate,
+            'uom_items': uom_item
         },
         success:function(rs) {
             load_out();

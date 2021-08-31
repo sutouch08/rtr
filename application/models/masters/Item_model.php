@@ -15,13 +15,15 @@ class Item_model extends CI_Model
     ->select('item_group.name AS item_group_name')
     ->select('uom1.name AS uom_name')
     ->select('uom2.name AS main_uom_name')
+    ->select('uom_item.rate AS rate')
     ->from('item')
     ->join('item_group', 'item.item_group_id = item_group.id', 'left')
     ->join('uom AS uom1', 'item.uom_id = uom1.id', 'left')
-    ->join('uom AS uom2', 'item.main_uom_id = uom2.id', 'left');
+    ->join('uom AS uom2', 'item.main_uom_id = uom2.id', 'left')
+    ->join('uom_item', 'item.id = uom_item.item_id AND item.main_uom_id = uom_item.uom_id', 'left');
 
     $rs = $this->db->where('item.id', $id)->get();
-    
+
     if($rs->num_rows() === 1)
     {
       return $rs->row();

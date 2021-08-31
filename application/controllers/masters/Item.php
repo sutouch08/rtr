@@ -91,24 +91,79 @@ class Item extends PS_Controller
 						$uom_id = trim($this->input->post('uom_id'));
 						$main_uom_id = $this->input->post('main_uom_id');
 						$rate = $this->input->post('rate');
+						$uom_item = $this->input->post('uom_items');
 
 						$arr = array(
 							'name' => $name,
 							'barcode' => $barcode,
 							'uom_id' => $uom_id,
 							'main_uom_id' => empty($main_uom_id) ? $uom_id : $main_uom_id,
-							'rate' => empty($rate) ? 1 : $rate,
 							'item_group_id' => trim($this->input->post('item_group_id')),
 							'price' => empty($this->input->post('price')) ? 0.00 : $this->input->post('price'),
 							'status' => empty($this->input->post('status')) ? 0 : 1,
-							'add_user' => $this->user->id,
+							'add_user' => $this->user->id
 						);
 
-						if(!$this->item_model->add($arr))
+						$id = $this->item_model->add($arr);
+
+						if(! $id)
 						{
 							$sc = FALSE;
 							$this->error = "เพิ่มรายการสินค้าไม่สำเร็จ";
 						}
+						else
+						{
+							//--- insert SKU uom_item
+							$arr = array(
+								'item_id' => $id,
+								'uom_id' => $uom_id,
+								'rate' => 1
+							);
+
+							if(! $this->uom_item_model->add($arr))
+							{
+								$sc = FALSE;
+								$this->error = "Insert SKU failed";
+							}
+
+							//--- insert Main uom_item
+
+							if($sc === TRUE && $main_uom_id != $uom_id)
+							{
+								$arr = array(
+									'item_id' => $id,
+									'uom_id' => $main_uom_id,
+									'rate' => empty($rate) ? 1 : $rate
+								);
+
+								if(!$this->uom_item_model->add($arr))
+								{
+									$sc = FALSE;
+									$this->error = "Insert Main uom failed";
+								}
+							}
+
+
+							//--- insert other uom_item
+							if($sc === TRUE && !empty($uom_item))
+							{
+								foreach($uom_item as $rs)
+								{
+									//---- if not same as sku and not same as main uom
+									if($rs['id'] != $uom_id && $rs['id'] != $main_uom_id)
+									{
+										$arr = array(
+											'item_id' => $id,
+											'uom_id' => $rs['id'],
+											'rate' => $rs['rate']
+										);
+
+										$this->uom_item_model->add($arr);
+									}
+								}
+							}
+						}
+
 					}
 					else
 					{
@@ -148,6 +203,7 @@ class Item extends PS_Controller
 
 			if(!empty($ds))
 			{
+				$ds->uom_items = $this->uom_item_model->get_item_uom($id);
 				$this->load->view('masters/item/item_edit', $ds);
 			}
 			else
@@ -188,26 +244,100 @@ class Item extends PS_Controller
 
 						if(!$is_exists_barcode)
 						{
+							$this->db->trans_begin();
+
 							$uom_id = trim($this->input->post('uom_id'));
 							$main_uom_id = $this->input->post('main_uom_id');
 							$rate = $this->input->post('rate');
+							$uom_item = $this->input->post('uom_items');
 
 							$arr = array(
 								'name' => $name,
 								'barcode' => $barcode,
 								'uom_id' => $uom_id,
 								'main_uom_id' => empty($main_uom_id) ? $uom_id : $main_uom_id,
-								'rate' => empty($rate) ? 1 : $rate,
 								'item_group_id' => trim($this->input->post('item_group_id')),
 								'price' => empty($this->input->post('price')) ? 0.00 : $this->input->post('price'),
 								'status' => empty($this->input->post('status')) ? 0 : 1,
-								'update_user' => $this->user->id,
+								'update_user' => $this->user->id
 							);
 
 							if(!$this->item_model->update($id, $arr))
 							{
 								$sc = FALSE;
 								$this->error = "ปรับปรุงช้อมูลไม่สำเร็จ";
+							}
+
+							if($sc === TRUE)
+							{
+								//--- Drop uom item
+								if(! $this->uom_item_model->drop_current_item_uom($id))
+								{
+									$sc = FALSE;
+									$this->error = "Delete current uom items failed";
+								}
+								else
+								{
+									//--- insert SKU uom_item
+									$arr = array(
+										'item_id' => $id,
+										'uom_id' => $uom_id,
+										'rate' => 1
+									);
+
+									if(! $this->uom_item_model->add($arr))
+									{
+										$sc = FALSE;
+										$this->error = "Insert SKU failed";
+									}
+
+									//--- insert Main uom_item
+
+									if($sc === TRUE && $main_uom_id != $uom_id)
+									{
+										$arr = array(
+											'item_id' => $id,
+											'uom_id' => $main_uom_id,
+											'rate' => empty($rate) ? 1 : $rate
+										);
+
+										if(!$this->uom_item_model->add($arr))
+										{
+											$sc = FALSE;
+											$this->error = "Insert Main uom failed";
+										}
+									}
+
+
+									//--- insert other uom_item
+									if($sc === TRUE && !empty($uom_item))
+									{
+										foreach($uom_item as $rs)
+										{
+											//---- if not same as sku and not same as main uom
+											if($rs['id'] != $uom_id && $rs['id'] != $main_uom_id)
+											{
+												$arr = array(
+													'item_id' => $id,
+													'uom_id' => $rs['id'],
+													'rate' => $rs['rate']
+												);
+
+												$this->uom_item_model->add($arr);
+											}
+										}
+									}
+								}
+
+							}
+
+							if($sc === TRUE)
+							{
+								$this->db->trans_commit();
+							}
+							else
+							{
+								$this->db->trans_rollback();
 							}
 						}
 						else

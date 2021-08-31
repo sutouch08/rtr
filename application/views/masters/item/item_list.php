@@ -63,8 +63,7 @@
                    <th class="width-5 text-center">#</th>
                    <th class="width-10">บาร์โค้ด</th>
                    <th class="">สินค้า</th>
-                   <th class="width-10 text-center">หน่วยนับหลัก</th>
-                   <th class="width-10 text-center">หน่วยย่อย</th>
+                   <th class="width-15 text-center">หน่วยนับ</th>
                    <th class="width-10 text-center">ราคา</th>
                    <th class="width-15 text-center">กลุ่มสินค้า</th>
                    <th class="width-5 text-center">สถานะ</th>
@@ -79,13 +78,7 @@
                     <td class="middle text-center no"><?php echo $no; ?></td>
                     <td class="middle"><?php echo $rs->barcode; ?></td>
                     <td class="middle"><?php echo $rs->name; ?></td>
-                    <td class="middle text-center">
-                      <?php echo $rs->main_uom_name; ?>
-                      <?php if($rs->rate > 1): ?>
-                        <?php echo "(".round($rs->rate, 2).")"; ?>
-                      <?php endif; ?>
-                    </td>
-                    <td class="middle text-center"><?php echo $rs->uom_name; ?></td>
+                    <td class="middle text-center"><?php echo uom_item_label($rs->id, $rs->uom_id, $rs->main_uom_id); ?></td>
                     <td class="middle text-center"><?php echo number($rs->price, 2); ?></td>
                     <td class="middle text-center"><?php echo $rs->group_name; ?></td>
                     <td class="middle text-center"><?php echo is_active($rs->status); ?></td>
