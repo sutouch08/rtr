@@ -140,6 +140,24 @@
           </select>
         </div>
     </div>
+
+
+    <div class="form-group">
+      <label class="col-sm-3 col-xs-12 no-padding-right"></label>
+      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+    		<div class="col-sm-12 col-xs-12 no-padding" id="previewImg">
+    			<span class="profile-picture">
+    				<img class="editable img-responsive" src="<?php echo $image; ?>">
+    			</span>
+
+    		</div>
+    		<div class="divider-hidden"></div>
+
+    		<div class="col-sm-12 col-xs-12 no-padding">
+    			<button type="button" class="btn btn-sm btn-primary" onclick="changeImage()"><i class="fa fa-plus"></i> Change Image</button>
+    		</div>
+    	</div>
+    </div>
     <div class="divider-hidden" id="divider"> </div>
     <div class="divider-hidden" id="divider"> </div>
     <div class="divider-hidden" id="divider"> </div>
@@ -154,6 +172,7 @@
     <input type="text" name="x-form" class="hidden">
     <input type="hidden" id="id" value="<?php echo $id; ?>">
     <input type="hidden" id="no" value="<?php echo $no; ?>">
+    <input type="file" name="image" id="image" accept="image/*" style="display:none;" />
 </form>
 
 

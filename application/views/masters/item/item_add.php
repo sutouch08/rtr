@@ -11,7 +11,7 @@
 </div><!-- End Row -->
 <hr class="padding-5 margin-bottom-30" />
 
-<form class="form-horizontal">
+<form class="form-horizontal" id="addForm">
     <div class="form-group">
         <label class="col-sm-3 col-xs-12 control-label no-padding-right">ชื่อสินค้า</label>
         <div class="col-xs-12 col-sm-4">
@@ -90,15 +90,12 @@
               <?php echo select_uom(); ?>
             </select>
         </div>
-        <div class="col-xs-12 col-sm-4">
+        <div class="col-xs-12 col-sm-6">
           <span><label class="input-mini" id="u_uom_label">ตัวคูณ</label>
             <input type="number" class="form-control input-sm input-small inline text-center" name="u_rate" id="u_rate" placeholder="ตัวคูณ"/>
             <label class="input-mini" id="u_sku_label" style="padding-left:10px;"></label>
             <button type="button" class="btn btn-xs btn-success input-small" onclick="addUom()"><i class="fa fa-plus"></i> เพิ่ม</button>
           </span>
-        </div>
-        <div class="col-xs-6 col-sm-1 padding-5">
-
         </div>
     </div>
 
@@ -121,15 +118,16 @@
     <div class="form-group">
       <label class="col-sm-3 col-xs-12 no-padding-right"></label>
       <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-    		<div class="col-sm-12 col-xs-12 no-padding">
+    		<div class="col-sm-12 col-xs-12 no-padding" id="previewImg">
     			<span class="profile-picture">
-    				<img class="editable img-responsive" src="<?php echo no_image_path('mini'); ?>">
+    				<img class="editable img-responsive" src="<?php echo no_image_path('default'); ?>">
     			</span>
+
     		</div>
     		<div class="divider-hidden"></div>
 
-    		<div class="col-sm-12 col-xs-12 ">
-    			<button type="button" class="btn btn-sm btn-success" onclick="changeImage()">เลือกรูปภาพ</button>
+    		<div class="col-sm-12 col-xs-12 no-padding">
+    			<button type="button" class="btn btn-sm btn-primary" onclick="changeImage()"><i class="fa fa-plus"></i> Add image</button>
     		</div>
     	</div>
     </div>
@@ -147,6 +145,7 @@
 
     <input type="text" name="x-form" class="hidden">
     <input type="hidden" id="no" value="1">
+    <input type="file" name="image" id="image" accept="image/*" style="display:none;" />
 </form>
 
 

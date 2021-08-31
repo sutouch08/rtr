@@ -26,6 +26,7 @@ function saveAdd() {
     let rate = $("#rate").val();
     let status = $("#status").val();
     let uom_item = [];
+    var image	= $("#image")[0].files[0];
 
 
 
@@ -76,6 +77,18 @@ function saveAdd() {
       })
     }
 
+    var fd = new FormData();
+  	fd.append('image', image);
+  	fd.append('name', name);
+  	fd.append('barcode', barcode);
+  	fd.append('uom_id', uom_id);
+  	fd.append('item_group_id', item_group_id);
+  	fd.append('price', price);
+  	fd.append('status', status);
+  	fd.append('main_uom_id', main_uom_id);
+  	fd.append('rate', rate);
+    fd.append('uom_items', JSON.stringify(uom_item));
+
 
     load_in();
 
@@ -83,17 +96,9 @@ function saveAdd() {
         url:HOME + 'add',
         type:'POST',
         cache:false,
-        data:{
-            'name' : name,
-            'barcode' : barcode,
-            'uom_id' : uom_id,
-            'item_group_id' : item_group_id,
-            'price' : price,
-            'status' : status,
-            'main_uom_id' : main_uom_id,
-            'rate' : rate,
-            'uom_items': uom_item
-        },
+        data:fd,
+        processData:false,
+        contentType:false,
         success:function(rs) {
             load_out();
             if(rs === 'success') {
@@ -138,6 +143,7 @@ function update() {
     let main_uom_id = $('#main_uom_id').val();
     let rate = $("#rate").val();
     let status = $("#status").val();
+    let image = $('#image')[0].files[0];
     let uom_item = [];
 
 
@@ -189,6 +195,21 @@ function update() {
       })
     }
 
+    // console.log(uom_item);
+    // return false;
+
+    var fd = new FormData();
+    fd.append('id', item_id);
+  	fd.append('image', image);
+  	fd.append('name', name);
+  	fd.append('barcode', barcode);
+  	fd.append('uom_id', uom_id);
+  	fd.append('item_group_id', item_group_id);
+  	fd.append('price', price);
+  	fd.append('status', status);
+  	fd.append('main_uom_id', main_uom_id);
+  	fd.append('rate', rate);
+    fd.append('uom_items', JSON.stringify(uom_item));
 
     load_in();
 
@@ -196,18 +217,9 @@ function update() {
         url:HOME + 'update',
         type:'POST',
         cache:false,
-        data:{
-            'id' : item_id,
-            'name' : name,
-            'barcode' : barcode,
-            'uom_id' : uom_id,
-            'item_group_id' : item_group_id,
-            'price' : price,
-            'status' : status,
-            'main_uom_id' : main_uom_id,
-            'rate' : rate,
-            'uom_items': uom_item
-        },
+        processData:false,
+        contentType:false,
+        data:fd,
         success:function(rs) {
             load_out();
             if(rs === 'success') {
@@ -544,4 +556,51 @@ function getDelete(id, name){
       }
     })
   })
+}
+
+
+function readURL(input)
+{
+   if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#previewImg').html('<img id="previewImg" src="'+e.target.result+'" width="200px" alt="รูปสลิปของคุณ" />');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+
+
+
+
+
+$("#image").change(function(){
+  if($(this).val() != '')
+  {
+    var file 		= this.files[0];
+    var name		= file.name;
+    var type 		= file.type;
+    var size		= file.size;
+    if(file.type != 'image/png' && file.type != 'image/jpg' && file.type != 'image/gif' && file.type != 'image/jpeg' )
+    {
+      swal("รูปแบบไฟล์ไม่ถูกต้อง", "กรุณาเลือกไฟล์นามสกุล jpg, jpeg, png หรือ gif เท่านั้น", "error");
+      $(this).val('');
+      return false;
+    }
+    if( size > 2000000 )
+    {
+      swal("ขนาดไฟล์ใหญ่เกินไป", "ไฟล์แนบต้องมีขนาดไม่เกิน 2 MB", "error");
+      $(this).val('');
+      return false;
+    }
+    readURL(this);
+    $("#btn-select-file").css("display", "none");
+    $("#block-image").animate({opacity:1}, 1000);
+  }
+});
+
+
+function changeImage() {
+  $('#image').click();
 }

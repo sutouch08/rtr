@@ -25,7 +25,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $doc_folder = 'rtr';
 $config['base_url'] = 'http://localhost/rtr/';
-$config['image_path'] = 'images/products/';
+$config['image_path'] = 'images/';
 $config['upload_path'] = 'upload/';
 $config['company_logo'] = 'images/company/company_logo.png';
 $config['image_file_path'] = $_SERVER['DOCUMENT_ROOT'] ."/{$doc_folder}/images/";

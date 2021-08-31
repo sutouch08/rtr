@@ -41,7 +41,7 @@
 
 
 
-    function get_item_oum_text($id)
+    function get_item_uom_text($id, $uom_id, $main_id)
     {
       $sc = "";
       $ci =& get_instance();
@@ -53,8 +53,12 @@
         $i = 1;
         foreach($uom as $rs)
         {
-          $sc .= $i === 1 ? $rs->uom_name."(".$rs->rate.")" : ", ".$rs->uom_name."(".$rs->rate.")";
-          $i++;
+          if($rs->uom_id != $uom_id && $rs->uom_id != $main_id)
+          {
+            $sc .= $i === 1 ? $rs->uom_name."(".$rs->rate.")" : ", ".$rs->uom_name."(".$rs->rate.")";
+            $i++;
+          }
+
         }
       }
 
@@ -75,15 +79,15 @@
         foreach($uom as $rs)
         {
           $sc .= "<span class='label label-info label-white margin-right-5'>";
-          if($rs->id == $uom_id)
+          if($rs->uom_id == $uom_id)
           {
             $sc .= "<i class='ace-icon fa fa-check bigger-120'></i>";
           }
-          else if($rs->id == $main_id)
+          else if($rs->uom_id == $main_id)
           {
             $sc .= "<i class='ace-icon fa fa-star bigger-120'></i>";
           }
-          if($rs->id != $uom_id)
+          if($rs->uom_id != $uom_id)
           {
             $sc .= $rs->uom_name."(".round($rs->rate, 2).")";
           }
@@ -103,7 +107,6 @@
     function get_image_path($id, $size = 'default')
     {
       $CI =& get_instance();
-      $CI->load->model('masters/product_image_model');
       $path = $CI->config->item('image_path').'products/';
       $no_image_path = base_url().$path.$size.'/no_image_'.$size.'.jpg';
     	$image_path = base_url().$path.$size.'/product_'.$size.'_'.$id.'.jpg';
@@ -114,17 +117,13 @@
     }
 
 
-
-
-    function get_product_image($code, $size = 'default')
+    function has_image($id, $size = 'default')
     {
       $CI =& get_instance();
-      $CI->load->model('masters/product_image_model');
-      $id_image = $CI->product_image_model->get_id_image($code);
-      return get_image_path($id_image, $size);
+    	$file = $CI->config->item('image_file_path').'products/'.$size.'/product_'.$size.'_'.$id.'.jpg';
+
+    	return file_exists($file);
     }
-
-
 
 
     function delete_product_image($id)
@@ -141,30 +140,14 @@
 
 
 
-    function get_cover_image($code, $size = 'default')
-    {
-      $CI =& get_instance();
-      $CI->load->model('masters/product_image_model');
-      $id  = $CI->product_image_model->get_cover($code);
-      return get_image_path($id, $size);
-    }
-
-
     function no_image_path($size)
     {
       $CI =& get_instance();
-      $path = $CI->config->item('image_path');
+      $path = $CI->config->item('image_path')."products/";
       $no_image_path = base_url().$path.$size.'/no_image_'.$size.'.jpg';
       return $no_image_path;
     }
 
-    function no_image_path2($size)
-    {
-      $CI =& get_instance();
-      $path = $CI->config->item('image_path');
-      $no_image_path = base_url().$path.$size.'/no_image_'.$size.'.jpg';
-      return $no_image_path;
-    }
 
 
 

@@ -61,6 +61,7 @@
             <thead>
                 <tr>
                    <th class="width-5 text-center">#</th>
+                   <th class="width-5 text-center">img</th>
                    <th class="width-10">บาร์โค้ด</th>
                    <th class="">สินค้า</th>
                    <th class="width-15 text-center">หน่วยนับ</th>
@@ -76,9 +77,10 @@
                 <?php foreach($data as $rs) : ?>
                 <tr>
                     <td class="middle text-center no"><?php echo $no; ?></td>
+                    <td class="middle text-center no-padding"><img src="<?php echo get_image_path($rs->id, 'mini'); ?>" width="50"/></td>
                     <td class="middle"><?php echo $rs->barcode; ?></td>
                     <td class="middle"><?php echo $rs->name; ?></td>
-                    <td class="middle text-center"><?php echo uom_item_label($rs->id, $rs->uom_id, $rs->main_uom_id); ?></td>
+                    <td class="middle"><?php echo uom_item_label($rs->id, $rs->uom_id, $rs->main_uom_id); ?></td>
                     <td class="middle text-center"><?php echo number($rs->price, 2); ?></td>
                     <td class="middle text-center"><?php echo $rs->group_name; ?></td>
                     <td class="middle text-center"><?php echo is_active($rs->status); ?></td>
@@ -128,9 +130,10 @@
         <tr><td class="width-30">ราคา</td><td class="width-70">{{price}}</td></tr>
         <tr><td class="width-30">กลุ่มสินค้า</td><td class="width-70">{{group_name}}</td></tr>
         <tr><td class="width-30">หน่วยนับ</td><td class="width-70">{{uom_name}}</td></tr>
-        <tr><td class="width-30">หน่วยหลัก</td><td class="width-70">{{main_uom_name}}</td></tr>
-        <tr><td class="width-30">อัตรส่วน</td><td class="width-70">1 {{main_uom_name}} = {{rate}} {{uom_name}}</td></tr>
+        <tr><td class="width-30">หน่วยหลัก</td><td class="width-70">{{main_uom_name}} (1 {{main_uom_name}} = {{rate}}  {{uom_name}})</td></tr>
+        <tr><td class="width-30">หน่วยอื่น</td><td class="width-70">{{uom_items_name}}</td></tr>
         <tr><td class="width-30">สถานะ</td><td class="width-70">{{status}}</td></tr>
+        <tr><td colspan="2"><img src="{{image}}" class="width-100"/></td></tr>
       </table>
     </div>
   </div>
