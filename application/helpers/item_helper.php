@@ -158,6 +158,14 @@
       return $no_image_path;
     }
 
+    function no_image_path2($size)
+    {
+      $CI =& get_instance();
+      $path = $CI->config->item('image_path');
+      $no_image_path = base_url().$path.$size.'/no_image_'.$size.'.jpg';
+      return $no_image_path;
+    }
+
 
 
 
